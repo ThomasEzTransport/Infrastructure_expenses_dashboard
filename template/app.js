@@ -14,10 +14,12 @@
 
 const FLOURISH_MANIFEST = "flourish_links.csv"; // name;flourish_visualisation_url
 
-// Tabs and their plots, in display order. Plot names must match the manifest.
+// Tabs in display order. A sheet either lists Flourish plots (names must match
+// the manifest) or points to a self-contained HTML page shown in an iframe.
 const SHEETS = [
     { id: "overview", label: "Overview", plots: ["plot1", "plot2", "plot3", "plot4", "plot6"] },
     { id: "real-terms", label: "Rail investment over time", plots: ["plot5"] },
+    { id: "map", label: "Stations map", iframe: "stations_map.html" },
 ];
 
 // --- helpers ---------------------------------------------------------------
@@ -64,6 +66,18 @@ function chartCard(url) {
     return card;
 }
 
+// Build a full-width card that embeds a self-contained HTML page (e.g. a map).
+function iframeCard(src) {
+    const card = document.createElement("div");
+    card.className = "chart-card map-card";
+    const frame = document.createElement("iframe");
+    frame.src = src;
+    frame.loading = "lazy";
+    frame.title = "Embedded page";
+    card.appendChild(frame);
+    return card;
+}
+
 // Show one sheet, hide the others, and nudge Flourish to re-measure the
 // now-visible embeds (they can render at the wrong size while hidden).
 function activateSheet(sheetId) {
@@ -92,23 +106,27 @@ async function buildDashboard() {
         btn.addEventListener("click", () => activateSheet(sheet.id));
         tabBar.appendChild(btn);
 
-        // Sheet grid with its plots
+        // Sheet grid with its plots (or a single embedded page)
         const grid = document.createElement("div");
         grid.className = "dashboard-grid";
         grid.dataset.sheet = sheet.id;
-        sheet.plots.forEach(name => {
-            const url = urlByName[name];
-            if (!url) {
-                console.error(`Sheet "${sheet.id}": "${name}" is not in the manifest`);
-                return;
-            }
-            grid.appendChild(chartCard(url));
-        });
+        if (sheet.iframe) {
+            grid.appendChild(iframeCard(sheet.iframe));
+        } else {
+            (sheet.plots || []).forEach(name => {
+                const url = urlByName[name];
+                if (!url) {
+                    console.error(`Sheet "${sheet.id}": "${name}" is not in the manifest`);
+                    return;
+                }
+                grid.appendChild(chartCard(url));
+            });
+        }
         sheetsWrap.appendChild(grid);
     });
 
     // Warn about any plot that isn't shown on a sheet.
-    const assigned = new Set(SHEETS.flatMap(s => s.plots));
+    const assigned = new Set(SHEETS.flatMap(s => s.plots || []));
     Object.keys(urlByName).filter(n => !assigned.has(n))
         .forEach(n => console.warn(`Plot "${n}" is in the manifest but not on any sheet`));
 
