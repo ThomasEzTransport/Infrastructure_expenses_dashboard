@@ -1,0 +1,16 @@
+# Google Drive metadata / online-only pointer files
+# (these cannot be read by git and hold no real data)
+desktop.ini
+*.gsheet
+*.gdoc
+*.gslides
+*.gdraw
+*.gform
+*.gmap
+*.gtable
+*.glink
+*.gnote
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
