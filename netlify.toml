@@ -1,0 +1,5 @@
+# Netlify configuration for the rail infrastructure dashboard.
+# The site (index.html, app.js, style.css and the manifest CSVs) lives in the
+# template/ folder, so that is what gets published. Static site — no build step.
+[build]
+  publish = "template"
