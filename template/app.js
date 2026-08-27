@@ -19,7 +19,7 @@ const FLOURISH_MANIFEST = "flourish_links.csv"; // name;flourish_visualisation_u
 const SHEETS = [
     { id: "overview", label: "Overview", plots: ["plot1", "plot2", "plot3", "plot4", "plot6"] },
     { id: "real-terms", label: "Rail investment over time", plots: ["plot5"] },
-    { id: "map", label: "Stations map", iframe: "stations_map.html" },
+    { id: "map", label: "French infrastucture state and stations punctuality", iframe: "stations_map.html" },
 ];
 
 // --- helpers ---------------------------------------------------------------
