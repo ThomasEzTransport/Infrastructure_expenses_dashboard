@@ -16,10 +16,16 @@ const FLOURISH_MANIFEST = "flourish_links.csv"; // name;flourish_visualisation_u
 
 // Tabs in display order. A sheet either lists Flourish plots (names must match
 // the manifest) or points to a self-contained HTML page shown in an iframe.
+// An optional "intro" string is shown as a paragraph above the sheet's plots.
 const SHEETS = [
-    { id: "overview", label: "Overview", plots: ["plot1", "plot2", "plot3", "plot4", "plot6"] },
-    { id: "delays", label: "Causes of delays", plots: ["plot7"] },
+    {
+        id: "overview",
+        label: "European rail infrastructure investment & expenditure",
+        intro: "How much European countries invest in and spend on their rail networks — investment per capita, spending over time, the breakdown of expenditure by type, and investment as a share of GDP.",
+        plots: ["plot1", "plot2", "plot3", "plot4", "plot6"]
+    },
     { id: "real-terms", label: "Rail investment over time", plots: ["plot5"] },
+    { id: "delays", label: "Causes of delays", plots: ["plot7"] },
     { id: "map", label: "French infrastucture state and stations punctuality", iframe: "stations_map.html" },
 ];
 
@@ -111,6 +117,13 @@ async function buildDashboard() {
         const grid = document.createElement("div");
         grid.className = "dashboard-grid";
         grid.dataset.sheet = sheet.id;
+        // Optional intro paragraph, spanning the full width above the plots.
+        if (sheet.intro) {
+            const intro = document.createElement("p");
+            intro.className = "sheet-intro";
+            intro.textContent = sheet.intro;
+            grid.appendChild(intro);
+        }
         if (sheet.iframe) {
             grid.appendChild(iframeCard(sheet.iframe));
         } else {

@@ -49,6 +49,16 @@
     display: grid;
 }
 
+/* Intro paragraph shown above a sheet's plots (spans both columns) */
+.sheet-intro {
+    grid-column: 1 / -1;
+    font-family: "effra", sans-serif;
+    font-size: 1.1rem;
+    line-height: 120%;
+    margin: 0;
+    color: #333;
+}
+
 /* Full-width card embedding a self-contained HTML page (e.g. the stations map) */
 .map-card {
     grid-column: 1 / -1;
