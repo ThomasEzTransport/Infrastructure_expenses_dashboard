@@ -18,6 +18,7 @@ const FLOURISH_MANIFEST = "flourish_links.csv"; // name;flourish_visualisation_u
 // the manifest) or points to a self-contained HTML page shown in an iframe.
 const SHEETS = [
     { id: "overview", label: "Overview", plots: ["plot1", "plot2", "plot3", "plot4", "plot6"] },
+    { id: "delays", label: "Causes of delays", plots: ["plot7"] },
     { id: "real-terms", label: "Rail investment over time", plots: ["plot5"] },
     { id: "map", label: "French infrastucture state and stations punctuality", iframe: "stations_map.html" },
 ];
