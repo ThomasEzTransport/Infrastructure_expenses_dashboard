@@ -17,6 +17,7 @@ const FLOURISH_MANIFEST = "flourish_links.csv"; // name;flourish_visualisation_u
 // Tabs in display order. A sheet either lists Flourish plots (names must match
 // the manifest) or points to a self-contained HTML page shown in an iframe.
 // An optional "intro" string is shown as a paragraph above the sheet's plots.
+// A { heading: "..." } entry in "plots" renders a full-width subheader; the plot after it spans the full width.
 const SHEETS = [
     {
         id: "overview",
@@ -25,7 +26,11 @@ const SHEETS = [
         plots: ["plot1", "plot2", "plot3", "plot4", "plot6"]
     },
     { id: "real-terms", label: "Rail investment over time", plots: ["plot5"] },
-    { id: "delays", label: "Causes of delays", plots: ["plot7"] },
+    {
+        id: "delays",
+        label: "Punctuality data",
+        plots: [{ heading: "Cause of delays" }, "plot7", { heading: "Punctuality over the last 6 years" }, "plot8"]
+    },
     { id: "map", label: "French infrastucture state and stations punctuality", iframe: "stations_map.html" },
 ];
 
@@ -128,6 +133,13 @@ async function buildDashboard() {
             grid.appendChild(iframeCard(sheet.iframe));
         } else {
             (sheet.plots || []).forEach(name => {
+                if (name.heading) {
+                    const h = document.createElement("h2");
+                    h.className = "section-heading";
+                    h.textContent = name.heading;
+                    grid.appendChild(h);
+                    return;
+                }
                 const url = urlByName[name];
                 if (!url) {
                     console.error(`Sheet "${sheet.id}": "${name}" is not in the manifest`);
@@ -140,7 +152,7 @@ async function buildDashboard() {
     });
 
     // Warn about any plot that isn't shown on a sheet.
-    const assigned = new Set(SHEETS.flatMap(s => s.plots || []));
+    const assigned = new Set(SHEETS.flatMap(s => s.plots || []).filter(p => !p.heading));
     Object.keys(urlByName).filter(n => !assigned.has(n))
         .forEach(n => console.warn(`Plot "${n}" is in the manifest but not on any sheet`));
 

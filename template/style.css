@@ -49,6 +49,19 @@
     display: grid;
 }
 
+/* Subheader introducing a group of plots; the plot right after it is full width */
+.section-heading {
+    grid-column: 1 / -1;
+    font-family: "effra", sans-serif;
+    font-size: 1.5rem;
+    margin: 12px 0 0;
+    color: #000;
+}
+
+.section-heading + .chart-card {
+    grid-column: 1 / -1;
+}
+
 /* Intro paragraph shown above a sheet's plots (spans both columns) */
 .sheet-intro {
     grid-column: 1 / -1;
