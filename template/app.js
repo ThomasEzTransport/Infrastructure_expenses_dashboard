@@ -29,7 +29,7 @@ const SHEETS = [
     {
         id: "delays",
         label: "Punctuality data",
-        plots: [{ heading: "Cause of delays" }, "plot7", { heading: "Punctuality over the last 6 years" }, "plot8"]
+        plots: [{ heading: "Ranking of European rail operators punctuality (2025)" }, "plot9", { heading: "Cause of delays" }, "plot7", { heading: "Punctuality over the last 6 years" }, "plot8"]
     },
     { id: "map", label: "French infrastucture state and stations punctuality", iframe: "stations_map.html" },
 ];
