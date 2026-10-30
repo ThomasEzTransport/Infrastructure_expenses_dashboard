@@ -1,18 +1,22 @@
 // ===========================================================================
 // Rail infrastructure investment dashboard
 // ---------------------------------------------------------------------------
-// Charts come from a manifest file (one "name;url" per line):
+// Charts come from one manifest file, plots.csv (";"-separated, with a header):
 //
-//   flourish_links.csv : plotN -> the Flourish visualisation to embed
-//   data_urls.csv      : plotN -> the published Google Sheet CSV each viz is
-//                        built from (kept for reference / traceability)
+//   id;flourish_link;title;data
+//
+//   id             : plotN, referenced by SHEETS below
+//   flourish_link  : the Flourish visualisation to embed
+//   title          : the chart title (reference)
+//   data           : the published Google Sheet CSV the viz is built from
+//                    (kept for reference / traceability)
 //
 // The dashboard is split into "sheets" (tabs). Each sheet lays its plots out
 // in a 2-column grid, and the LAST plot on a sheet spans the full width.
 // Edit SHEETS below to move a plot between tabs, reorder it, or rename a tab.
 // ===========================================================================
 
-const FLOURISH_MANIFEST = "flourish_links.csv"; // name;flourish_visualisation_url
+const PLOTS_MANIFEST = "plots.csv";
 
 // Tabs in display order. A sheet either lists Flourish plots (names must match
 // the manifest) or points to a self-contained HTML page shown in an iframe.
@@ -36,19 +40,20 @@ const SHEETS = [
 
 // --- helpers ---------------------------------------------------------------
 
-// Parse a "name;url" manifest: strips a UTF-8 BOM, ignores blank / # lines,
-// and splits on the first ";" only (URLs contain no ";").
+// Parse the ";"-separated manifest: strips a UTF-8 BOM, ignores blank / # lines,
+// reads the first line as the header and returns one object per row keyed by
+// column name (fields contain no ";").
 function parseManifest(text) {
-    return text
+    const [header, ...rows] = text
         .replace(/^﻿/, "")
         .split(/\r?\n/)
         .map(line => line.trim())
-        .filter(line => line && !line.startsWith("#"))
-        .map(line => {
-            const i = line.indexOf(";");
-            return { name: line.slice(0, i).trim(), url: line.slice(i + 1).trim() };
-        })
-        .filter(entry => entry.name && entry.url);
+        .filter(line => line && !line.startsWith("#"));
+    const columns = header.split(";").map(c => c.trim());
+    return rows.map(row => {
+        const cells = row.split(";").map(c => c.trim());
+        return Object.fromEntries(columns.map((c, i) => [c, cells[i]]));
+    });
 }
 
 // Pull the numeric visualisation id out of a Flourish URL.
@@ -103,8 +108,8 @@ function activateSheet(sheetId) {
 // --- build -----------------------------------------------------------------
 
 async function buildDashboard() {
-    const text = await fetch(FLOURISH_MANIFEST).then(r => r.text());
-    const urlByName = Object.fromEntries(parseManifest(text).map(e => [e.name, e.url]));
+    const text = await fetch(PLOTS_MANIFEST).then(r => r.text());
+    const urlByName = Object.fromEntries(parseManifest(text).map(e => [e.id, e.flourish_link]));
 
     const tabBar = document.getElementById("tabs");
     const sheetsWrap = document.getElementById("sheets");
