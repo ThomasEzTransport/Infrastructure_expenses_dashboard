@@ -94,6 +94,11 @@
     grid-column: 1 / -1;
 }
 
+/* Sheets flagged lastHalf keep their final plot in a single column */
+.dashboard-grid.last-half .chart-card:last-child {
+    grid-column: auto;
+}
+
 .chart-card {
     background-color: #F2EBE5;
     border-radius: 12px;

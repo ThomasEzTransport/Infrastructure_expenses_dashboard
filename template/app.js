@@ -24,18 +24,23 @@ const PLOTS_MANIFEST = "plots.csv";
 // A { heading: "..." } entry in "plots" renders a full-width subheader; the plot after it spans the full width.
 const SHEETS = [
     {
-        id: "overview",
-        label: "European rail infrastructure investment & expenditure",
-        intro: "How much European countries invest in and spend on their rail networks — investment per capita, spending over time, the breakdown of expenditure by type, and investment as a share of GDP.",
-        plots: ["plot1", "plot2", "plot3", "plot4", "plot6"]
+        id: "ranking",
+        label: "Punctuality ranking",
+        plots: [{ heading: "Ranking of European rail operators punctuality" }, "plot1"]
     },
-    { id: "real-terms", label: "Rail investment over time", plots: ["plot5"] },
     {
-        id: "delays",
-        label: "Punctuality data",
-        plots: [{ heading: "Ranking of European rail operators punctuality (2025)" }, "plot9", { heading: "Cause of delays" }, "plot7", { heading: "Punctuality over the last 6 years" }, "plot8"]
+        id: "details",
+        label: "More details on punctuality",
+        plots: [{ heading: "How punctuality evolved in the last years?" }, "plot2", { heading: "What are the cause of these delays?" }, "plot3"]
     },
-    { id: "map", label: "French infrastucture state and stations punctuality", iframe: "stations_map.html" },
+    {
+        id: "investments",
+        label: "Rail infrastructure investments",
+        // The last two plots sit side by side instead of the last one spanning the full width.
+        lastHalf: true,
+        plots: [{ heading: "Overall, investments for rail are not progressing enough in Europe" }, "plot4", "plot5", "plot6"]
+    },
+    { id: "map", label: "French infrastructure state and stations punctuality", iframe: "stations_map.html" },
 ];
 
 // --- helpers ---------------------------------------------------------------
@@ -127,6 +132,7 @@ async function buildDashboard() {
         const grid = document.createElement("div");
         grid.className = "dashboard-grid";
         grid.dataset.sheet = sheet.id;
+        if (sheet.lastHalf) grid.classList.add("last-half");
         // Optional intro paragraph, spanning the full width above the plots.
         if (sheet.intro) {
             const intro = document.createElement("p");
